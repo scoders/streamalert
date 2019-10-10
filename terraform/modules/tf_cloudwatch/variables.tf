@@ -1,20 +1,21 @@
 variable "region" {
-  type = "string"
+  type = string
 }
 
 variable "prefix" {
-  type = "string"
+  type = string
 }
 
 variable "cluster" {
-  type = "string"
+  type = string
 }
 
 variable "kinesis_stream_arn" {
-  type = "string"
+  type = string
 }
 
 variable "cross_account_ids" {
-  type    = "list"
+  type    = list(string)
   default = []
 }
+

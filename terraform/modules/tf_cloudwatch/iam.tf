@@ -3,11 +3,11 @@
 resource "aws_iam_role" "cloudwatch_subscription_role" {
   name               = "${var.prefix}_${var.cluster}_cloudwatch_subscription_role"
   path               = "/streamalert/${var.region}/"
-  assume_role_policy = "${data.aws_iam_policy_document.cloudwatch_logs_assume_role_policy.json}"
+  assume_role_policy = data.aws_iam_policy_document.cloudwatch_logs_assume_role_policy.json
 
-  tags {
+  tags = {
     Name    = "StreamAlert"
-    Cluster = "${var.cluster}"
+    Cluster = var.cluster
   }
 }
 
@@ -27,8 +27,8 @@ data "aws_iam_policy_document" "cloudwatch_logs_assume_role_policy" {
 // IAM Policy: Write to Kinesis
 resource "aws_iam_role_policy" "cloudwatch_kinesis_wo" {
   name   = "WriteCWLogsToKinesis"
-  role   = "${aws_iam_role.cloudwatch_subscription_role.id}"
-  policy = "${data.aws_iam_policy_document.cloudwatch_put_kinesis_events.json}"
+  role   = aws_iam_role.cloudwatch_subscription_role.id
+  policy = data.aws_iam_policy_document.cloudwatch_put_kinesis_events.json
 }
 
 // IAM Policy Document: Write to Kinesis
@@ -41,7 +41,7 @@ data "aws_iam_policy_document" "cloudwatch_put_kinesis_events" {
     ]
 
     resources = [
-      "${var.kinesis_stream_arn}",
+      var.kinesis_stream_arn,
     ]
   }
 
@@ -53,31 +53,29 @@ data "aws_iam_policy_document" "cloudwatch_put_kinesis_events" {
     ]
 
     resources = [
-      "${aws_iam_role.cloudwatch_subscription_role.arn}",
+      aws_iam_role.cloudwatch_subscription_role.arn,
     ]
   }
 }
 
 # IAM Policy: Access policy to allow writing CloudWatch logs cross-account
 resource "aws_cloudwatch_log_destination_policy" "cloudwatch_kinesis" {
-  count            = "${length(var.cross_account_ids) > 0 ? 1 : 0}"
-  destination_name = "${aws_cloudwatch_log_destination.cloudwatch_kinesis.name}"
-  access_policy    = "${data.aws_iam_policy_document.cross_account_destination_policy.json}"
+  count            = length(var.cross_account_ids) > 0 ? 1 : 0
+  destination_name = aws_cloudwatch_log_destination.cloudwatch_kinesis.name
+  access_policy    = data.aws_iam_policy_document.cross_account_destination_policy[0].json
 }
 
 // IAM Policy Document: Allow Cross Account CloudWatch logs subscription
 data "aws_iam_policy_document" "cross_account_destination_policy" {
-  count = "${length(var.cross_account_ids) > 0 ? 1 : 0}"
+  count = length(var.cross_account_ids) > 0 ? 1 : 0
 
   statement {
     effect = "Allow"
 
-    principals = {
+    principals {
       type = "AWS"
 
-      identifiers = [
-        "${var.cross_account_ids}",
-      ]
+      identifiers = var.cross_account_ids
     }
 
     actions = [
@@ -85,7 +83,8 @@ data "aws_iam_policy_document" "cross_account_destination_policy" {
     ]
 
     resources = [
-      "${aws_cloudwatch_log_destination.cloudwatch_kinesis.arn}",
+      aws_cloudwatch_log_destination.cloudwatch_kinesis.arn,
     ]
   }
 }
+

@@ -48,7 +48,7 @@ def generate_flow_logs(cluster_name, cluster_dict, config):
     )
     if create_internal_flow_logs:
         flow_logs_settings = {
-            'source': 'modules/tf_flow_logs/modules/internal',
+            'source': './modules/tf_flow_logs/modules/internal',
             'region': region,
             'prefix': prefix,
             'cluster': cluster_name,
@@ -76,7 +76,7 @@ def generate_flow_logs(cluster_name, cluster_dict, config):
 
     # Add the default settings to allow for internal and cross-account flow log sending
     cluster_dict['module']['flow_logs_default_{}'.format(cluster_name)] = {
-        'source': 'modules/tf_flow_logs/modules/default',
+        'source': './modules/tf_flow_logs/modules/default',
         'region': region,
         'prefix': prefix,
         'cluster': cluster_name,

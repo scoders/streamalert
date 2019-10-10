@@ -4,12 +4,10 @@ data "aws_iam_policy_document" "cloudwatch_logs_destination_policy" {
     sid    = "DestinationPolicy"
     effect = "Allow"
 
-    principals = {
+    principals {
       type = "AWS"
 
-      identifiers = [
-        "${var.account_ids}",
-      ]
+      identifiers = var.account_ids
     }
 
     actions = [
@@ -17,7 +15,7 @@ data "aws_iam_policy_document" "cloudwatch_logs_destination_policy" {
     ]
 
     resources = [
-      "${aws_cloudwatch_log_destination.kinesis.arn}",
+      aws_cloudwatch_log_destination.kinesis.arn,
     ]
   }
 }
@@ -28,11 +26,11 @@ data "aws_iam_policy_document" "cloudwatch_logs_destination_policy" {
 resource "aws_iam_role" "flow_log_subscription_role" {
   name               = "${var.prefix}_${var.cluster}_flow_log_subscription_role"
   path               = "/streamalert/"
-  assume_role_policy = "${data.aws_iam_policy_document.cloudwatch_logs_assume_role_policy.json}"
+  assume_role_policy = data.aws_iam_policy_document.cloudwatch_logs_assume_role_policy.json
 
-  tags {
+  tags = {
     Name    = "StreamAlert"
-    Cluster = "${var.cluster}"
+    Cluster = var.cluster
   }
 }
 
@@ -52,8 +50,8 @@ data "aws_iam_policy_document" "cloudwatch_logs_assume_role_policy" {
 // IAM Policy: Write to Kinesis
 resource "aws_iam_role_policy" "flow_logs_write_to_kinesis" {
   name   = "WriteFlowLogsToKinesis"
-  role   = "${aws_iam_role.flow_log_subscription_role.id}"
-  policy = "${data.aws_iam_policy_document.flow_logs_write_to_kinesis.json}"
+  role   = aws_iam_role.flow_log_subscription_role.id
+  policy = data.aws_iam_policy_document.flow_logs_write_to_kinesis.json
 }
 
 // IAM Policy Doc: Write to Kinesis
@@ -68,7 +66,7 @@ data "aws_iam_policy_document" "flow_logs_write_to_kinesis" {
     ]
 
     resources = [
-      "${var.destination_stream_arn}",
+      var.destination_stream_arn,
     ]
   }
 
@@ -80,7 +78,8 @@ data "aws_iam_policy_document" "flow_logs_write_to_kinesis" {
     ]
 
     resources = [
-      "${aws_iam_role.flow_log_subscription_role.arn}",
+      aws_iam_role.flow_log_subscription_role.arn,
     ]
   }
 }
+

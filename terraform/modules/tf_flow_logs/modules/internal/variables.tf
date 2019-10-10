@@ -1,18 +1,18 @@
 variable "region" {
-  type    = "string"
+  type    = string
   default = "us-east-1"
 }
 
 variable "prefix" {
-  type = "string"
+  type = string
 }
 
 variable "cluster" {
-  type = "string"
+  type = string
 }
 
 variable "cloudwatch_log_destination_arn" {
-  type = "string"
+  type = string
 }
 
 variable "flow_log_filter" {
@@ -24,16 +24,17 @@ variable "log_retention" {
 }
 
 variable "enis" {
-  type    = "list"
+  type    = list(string)
   default = []
 }
 
 variable "subnets" {
-  type    = "list"
+  type    = list(string)
   default = []
 }
 
 variable "vpcs" {
-  type    = "list"
+  type    = list(string)
   default = []
 }
+
