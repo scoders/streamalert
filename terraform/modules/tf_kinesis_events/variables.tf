@@ -3,17 +3,20 @@ variable "batch_size" {
 }
 
 variable "kinesis_stream_arn" {
+  type = string
 }
 
 variable "lambda_role_id" {
+  type = string
 }
 
 variable "lambda_production_enabled" {
 }
 
 variable "lambda_function_alias_arn" {
+  type = string
 }
 
 variable "role_policy_prefix" {
+  type = string
 }
-

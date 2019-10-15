@@ -5,4 +5,3 @@ output "cloudwatch_subscription_role_arn" {
 output "cloudwatch_destination_arn" {
   value = aws_cloudwatch_log_destination.cloudwatch_kinesis.arn
 }
-
