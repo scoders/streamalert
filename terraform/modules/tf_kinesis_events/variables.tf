@@ -16,7 +16,3 @@ variable "lambda_production_enabled" {
 variable "lambda_function_alias_arn" {
   type = string
 }
-
-variable "role_policy_prefix" {
-  type = string
-}
